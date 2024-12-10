@@ -1,15 +1,15 @@
 use chrono::{DateTime, Datelike, Local};
 use winapi::um::wincon::FreeConsole;
+
 use std::fs::{File, OpenOptions};
 use std::io::{self, Read, Write};
 use std::path::Path;
-
-// use winapi::um::winuser::GetConsoleWindow;
 
 mod bash_script;
 mod set_time;
 
 fn main() -> io::Result<()> {
+    // скрываем консоль
     unsafe {
         FreeConsole();
     }
@@ -18,7 +18,6 @@ fn main() -> io::Result<()> {
         // Пути к фалам файла
         let file_timer: &str = "current_day.txt";
         let file_config: &str = "config.txt";
-
         // Получаем текущее локальное время
         let now: DateTime<Local> = Local::now();
         // Извлекаем текущий день
@@ -55,14 +54,14 @@ fn main() -> io::Result<()> {
 
             file_day = &contents_timer.trim()[..2];
             file_time = &contents_timer.trim()[3..];
-
-            // Проверяем, совпадает ли содержимое файла с текущим днем
+            println!("{file_time}");
+            // Проверяем, совпадает ли день из файла с текущим днем
             if file_day == &format!("{}", formatted_day) {
                 let check: u32 = file_time.parse::<u32>().unwrap();
-                if check > config_time_number {
-                    bash_script::bash_script();
+                if check >= config_time_number {
+                    let _ = bash_script::bash_script(now);
                 }
-                set_time::set_time(file_timer, file_day, file_time);
+                let _ = set_time::set_time(file_timer, file_day, file_time);
                 continue;
             }
         }

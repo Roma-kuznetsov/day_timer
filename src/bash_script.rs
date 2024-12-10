@@ -1,24 +1,30 @@
+use chrono::{DateTime, Local};
+use std::fs::{File, OpenOptions};
+use std::io::{self, Write};
 use std::process::{exit, Command};
-use std::thread;
-use std::time::Duration;
-pub fn bash_script() {
-    // Пример команды Bash, такую как 'ls' для Linux или 'dir' для Windows
+
+pub fn bash_script(now: DateTime<Local>) -> io::Result<()> {
 
     let output = Command::new("shutdown")
-        .args(&["/f", "/s", "/t", "0"]) // немедленное завершение
+        .args(&["/f", "/s", "/t", "30"]) 
         .output()
         .expect("Не удалось запустить процесс");
 
+    let mut file: File = OpenOptions::new()
+        .write(true)
+        .create(true)
+        .open("log.txt")?;
+
     if output.status.success() {
-        println!("Команда успешно выполнена.");
+        writeln!(file, "Всё должно быть заебись {now}")?;
+        exit(10);
     } else {
         let exit_code = output.status.code().unwrap_or(-1);
         let stderr = String::from_utf8_lossy(&output.stderr);
-        eprintln!(
-            "Ошибка при выполнении команды (код выхода: {}):\n{}",
-            exit_code, stderr
-        );
+        writeln!(
+            file,
+            "Ошибка при выполнении команды (код выхода: {exit_code}):\n{stderr} :\n {now}"
+        )?;
         exit(exit_code);
     }
-    thread::sleep(Duration::new(2, 0));
 }

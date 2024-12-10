@@ -13,7 +13,7 @@ pub fn set_time(filename: &str, file_day: &str, file_time: &str) -> io::Result<(
     let mut file: File = OpenOptions::new()
         .write(true)
         .create(true)
-        .truncate(true) // Очищаем файл перед записью
+        .truncate(true) 
         .open(filename)?;
 
     let string = format!("{file_day}-{res}");
