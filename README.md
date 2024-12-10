@@ -10,7 +10,7 @@ It can work remotely without the Internet; therefore, there are options to bypas
 - *win 11*
 
 ## Required Assembly Tools
-- rustup >= 1.63.0
+- rustup = 1.63.0
 - cargo >= 1.63.0
 
 ## Build Project for production
